@@ -1,5 +1,3 @@
 * [GettingStarted Getting started with NFC]
 
 * [Sample Sample project]
-
-* [Building Building the API]
