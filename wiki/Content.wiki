@@ -1,3 +1,5 @@
 * [GettingStarted Getting started with NFC]
 
+* [HowTo How To Use]
+
 * [Sample Sample project]
