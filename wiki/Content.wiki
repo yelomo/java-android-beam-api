@@ -1,3 +1,5 @@
 * [GettingStarted Getting started with NFC]
 
+* [Sample Sample Project]
+
 * [Building Building the Project]
