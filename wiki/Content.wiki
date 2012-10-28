@@ -3,3 +3,5 @@
 * How To Use
 
 * Sample project
+
+* Compile it yourself
