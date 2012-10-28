@@ -1,1 +1,26 @@
+== General Prerequisites ==
+
+* NFC Reader
+
+* Java SE
+
+* Android Device with NFC Chip
+
+== NFC Reader ==
+
+The API is currently compatible with the following NFCReader:
+
+* ACR122U Firmeware: 103
+
+_other readers have not been tested yet_
+
+== Android Phones ==
+The API is currently compatible with the following Android Devices / Versions:
+
+* Galaxy Nexus (4.1.2)
+
+
+
+== Setting up the Environment ==
+
 = under construction =
