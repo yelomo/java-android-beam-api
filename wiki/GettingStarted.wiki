@@ -6,21 +6,24 @@
 
 * Android Device with NFC Chip
 
+_(optional)
+* driver for the NFC Reader_
+<hr>
 == NFC Reader ==
 
-The API is currently compatible with the following NFCReader:
+The API is currently compatible with the following NFC-Reader:
 
 * ACR122U Firmeware: 103
 
-_other readers have not been tested yet_
-
+_other readers have not been tested yet, please contact us if you got it running with another reader_
+<hr>
 == Android Phones ==
 The API is currently compatible with the following Android Devices / Versions:
 
 * Galaxy Nexus (4.1.2)
 
 
-
+<hr>
 == Setting up the Environment ==
 
 = under construction =
