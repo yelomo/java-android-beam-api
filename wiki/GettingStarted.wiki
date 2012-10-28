@@ -30,6 +30,3 @@ The API is currently compatible with the following Android Devices / Versions:
 
 
 <hr>
-== Setting up the Environment ==
-
-= under construction =
