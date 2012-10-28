@@ -1,3 +1,9 @@
+== What is this? ==
+This API for Java will provide an easy way to access an NFC Reader (like the Touch a Tag devices) to receive "beams" from your android device. So you can receive any data which can be send via android beam. Native applications, like the contact app (which will beam vcards), and your own apps are supported.
+
+_Currently it only supports recieving data via Android Beam, sending may be supported in a further version._
+
+
 == General Prerequisites ==
 
 * NFC Reader
