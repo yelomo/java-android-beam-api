@@ -3,7 +3,7 @@ This API for Java will provide an easy way to access an NFC Reader (like the Tou
 
 _Currently it only supports recieving data via Android Beam, sending may be supported in a further version._
 
-
+<hr>
 == General Prerequisites ==
 
 * NFC Reader
