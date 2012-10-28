@@ -1,4 +1,4 @@
-* [GettingStarted Getting started with NFC]
+* [Getting started with NFC]
 
 * [HowTo How To Use]
 
