@@ -1,4 +1,4 @@
-* [DettingStarted Getting Started]
+* [GettingStarted Getting Started]
 
 * How To Use
 
