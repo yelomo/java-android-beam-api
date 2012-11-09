@@ -26,7 +26,8 @@ _other readers have not been tested yet, please contact us if you got it running
 == Android Phones ==
 The API is currently compatible with the following Android Devices / Versions:
 
-* Galaxy Nexus (4.1.2)
+* Galaxy Nexus (4.1.2 Stock Rom)
+* Samsung Galaxy S3 (4.1.1 Stock Rom)
 
 
 <hr>
