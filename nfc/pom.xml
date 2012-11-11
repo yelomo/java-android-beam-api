@@ -14,7 +14,19 @@
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
 				<targetJdk>1.7</targetJdk>
 	</properties>
-
+	 <pluginRepositories>
+	<pluginRepository>
+	    <id>mc-release</id>
+	    <name>Local Maven repository of releases</name>
+	    <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+	    <snapshots>
+	        <enabled>false</enabled>
+	    </snapshots>
+	    <releases>
+	        <enabled>true</enabled>
+	    </releases>
+	</pluginRepository>
+	 </pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -38,6 +50,7 @@
 			<artifactId>log4j</artifactId>
 			<version>1.2.12</version>
 		</dependency>
+		<!-- Apache Stuff -->
 		<dependency>
 			<groupId>org.apache.commons</groupId>
 			<artifactId>commons-lang3</artifactId>
@@ -49,4 +62,15 @@
 			<version>1.7</version>
 		</dependency>
 	</dependencies>
+	  <build>
+    <plugins>
+        <plugin>
+            <groupId>com.google.code.maven-license-plugin</groupId>
+            <artifactId>maven-license-plugin</artifactId>
+            <configuration>
+                <header>src/etc/header.txt</header>
+            </configuration>
+        </plugin>
+    </plugins>
+  </build>
 </project>
