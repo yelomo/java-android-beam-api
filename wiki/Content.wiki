@@ -1,6 +1,6 @@
 * [GettingStarted Getting Started]
 
-* How To Use
+* [HowTo ] How To Use
 
 * Sample project
 
