@@ -1,0 +1,32 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+
+<log4j:configuration xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+	<appender name="FILE" class="org.apache.log4j.FileAppender">
+		<param name="Threshold" value="DEBUG" />
+		<param name="File" value="${catalina.base}/logs/ac_server.log" />
+		<param name="Append" value="false" />
+		<layout class="org.apache.log4j.PatternLayout">
+			<param name="ConversionPattern" value="%d %X{user} %-5p [%c]
+%m%n" />
+		</layout>
+	</appender>
+
+	<appender name="CONSOLE" class="org.apache.log4j.ConsoleAppender">
+		<layout class="org.apache.log4j.PatternLayout">
+		<!-- left thread name out put [%t] to see it -->
+			<param name="ConversionPattern" value="%d{HH:mm:ss,SSS}  %p %X{user} - %C{1}.%M(%L) | %m%n" />
+		</layout>
+	</appender>
+
+	<logger name="de.estudent">
+		<level value="DEBUG" />
+	</logger>
+
+	<root>
+		<level value="DEBUG" />
+		<appender-ref ref="CONSOLE" />
+		<appender-ref ref="FILE" />
+	</root>
+</log4j:configuration>
