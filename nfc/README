@@ -1,0 +1,52 @@
+What is this?
+
+This API for Java will provide an easy way to access an NFC Reader (like the 
+Touch a Tag devices) to receive "beams" from your android device. 
+So you can receive any data which can be send via android beam. Native 
+applications, like the contact app (which will beam vcards), 
+and your own apps are supported.
+Currently it only supports recieving data from the Android Device, 
+sending may be supported in a further version.
+
+================================================================================
+
+Currently Supported and tested Devices:
+
+- ACR122U Firmeware: 103
+	other readers have not been tested yet, please contact us if you got it 
+  	running with another reader.
+
+- Galaxy Nexus (4.1.2 Stock Rom) 
+
+- Samsung Galaxy S3 (4.1.1 Stock Rom) 
+
+================================================================================
+
+Install in your local Maven Repository
+
+To install our Artifact in your local Maven Repository, to use it in your maven 
+projects, please follow these steps:
+
+1. Unpack the Files and execude the following command:
+
+	mvn install:install-file -Dfile="<jar-name>"
+
+2. Now you installed the pom file and jar in your local repository include the 
+NFC-API with the following lines in your pom:
+
+	<dependency>
+  		<groupId>de.estudent.accesscontrol</groupId>
+  		<artifactId>nfc</artifactId>
+  		<version> VERSION NUMBER </version>
+	</dependency>
+
+================================================================================
+
+Further Informations can be found in our google project
+
+http://code.google.com/p/java-android-beam-api/
+
+================================================================================ 
+
+java-android-beam-api is developed, by students of University Bremen, 
+in the context of the eStudent Project. 
