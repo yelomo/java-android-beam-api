@@ -13,7 +13,7 @@ To install our Artifact in your local Maven Repository, to use it in your maven 
 
 2. Unpack the Files and execude the following command:
 {{{
-mvn install:install-file -DpomFile="pom.xml" -Dfile="<jar-name>"
+mvn install:install-file -Dfile="<jar-name>"
 }}}
 
 3. Now you installed the pom file and jar in your local repository
