@@ -6,3 +6,22 @@
 _The API is currently tested under Windows 7 only, but it should be no problem to get it running on a linux mashine. _
 
 <hr>
+== Install in your local Maven Repository ==
+To install our Artifact in your local Maven Repository, to use it in your maven projects, please follow these steps:
+
+1. Download the API jar file
+
+2. Unpack the Files and execude the following command:
+{{{
+mvn install:install-file -DpomFile="pom.xml" -Dfile="<jar-name>"
+}}}
+
+3. Now you installed the pom file and jar in your local repository
+include the NFC-API with the following lines in your pom:
+{{{
+<dependency>
+  <groupId>de.estudent.accesscontrol</groupId>
+  <artifactId>nfc</artifactId>
+   <version> VERSION NUMBER </version>
+</dependency>
+}}}
