@@ -4,4 +4,6 @@
 
 * [Sample Sample project]
 
+* [Releases Changelog and Releases]
+
 * Compile it yourself
