@@ -40,7 +40,7 @@
 
 	<appender name="FILE" class="org.apache.log4j.FileAppender">
 		<param name="Threshold" value="DEBUG" />
-		<param name="File" value="${catalina.base}/logs/ac_server.log" />
+		<param name="File" value="nfc_api.log" />
 		<param name="Append" value="false" />
 		<layout class="org.apache.log4j.PatternLayout">
 			<param name="ConversionPattern" value="%d %X{user} %-5p [%c]
