@@ -2,6 +2,6 @@
 
 * [HowTo How To Use] 
 
-* Sample project
+* [Sample Sample project]
 
 * Compile it yourself
