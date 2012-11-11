@@ -75,9 +75,24 @@ public class TouchATag implements NFCDevice {
     private int max_allowed_size;
     private long timeout;
 
+    /**
+     * Initalize the Touch a Tag with predefined Values for maximal allowed size
+     * and timeout. max_allowed_size = 2048 bytes timeout = 3500 Milisecounds
+     */
     public void initalizeWithDefaultValues() throws NFCInitalizationException {
         initalize(3500, 2048);
     }
+
+    /**
+     * Initalize the Touch a Tag.
+     * 
+     * @param timeout
+     *            How Long we will whait for the user to push the beam UI.
+     * 
+     * @param max_allowed_size
+     *            Size in bytes how big a beam could be maximal.
+     * 
+     */
 
     public void initalize(long timeout, int max_allowed_size)
             throws NFCInitalizationException {
