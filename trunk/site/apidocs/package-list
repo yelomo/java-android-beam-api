@@ -1,0 +1,6 @@
+de.estudent.accesscontrol.nfc
+de.estudent.accesscontrol.nfc.exceptions
+de.estudent.accesscontrol.nfc.listener
+de.estudent.accesscontrol.nfc.ndef
+de.estudent.accesscontrol.nfc.reader
+de.estudent.accesscontrol.nfc.reader.acs
