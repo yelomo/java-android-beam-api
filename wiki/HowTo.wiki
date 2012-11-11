@@ -1,0 +1,8 @@
+== Software Prerequisites ==
+* Maven
+
+* Java SE Development Kit 7u9
+
+_The API is currently tested under Windows 7 only, but it should be no problem to get it running on a linux mashine. _
+
+<hr>
