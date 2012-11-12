@@ -15,3 +15,4 @@ _Initial Release_
 <hr>
 = Future Releases =
 ===Version 1.0.0===
+ * - support the ACR122U 207
