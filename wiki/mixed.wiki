@@ -1,0 +1,22 @@
+= This Page is for general Code Samples =
+
+
+== Firmeware Version via direct connect ==
+This will work only on Windows machines! 
+<code language="java">
+TerminalFactory factory;
+List<CardTerminal> terminals;
+factory = TerminalFactory.getDefault();
+terminals = factory.terminals().list();
+CardTerminal terminal = terminals.get(0);
+
+byte[] GET_FIRMWARE_VERSION = { (byte) 0xff, (byte) 0x00, (byte) 0x48,
+        (byte) 0x00, (byte) 0x00 };
+
+int controlCode = 0x310000 + 3500 * 4;
+Card card = terminal.connect("DIRECT");
+byte[] response = card.transmitControlCommand(controlCode,
+        GET_FIRMWARE_VERSION);
+
+System.out.println("Firmeware: " + new String(response));
+</code>
