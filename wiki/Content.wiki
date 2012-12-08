@@ -6,4 +6,6 @@
 
 * [Releases Changelog and Releases]
 
+* [troubleshooting and general resources]
+
 * Compile it yourself
