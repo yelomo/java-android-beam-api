@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2008 Wilko Oley woley@tzi.de
+ * ﻿Copyright (C) 2012 Wilko Oley woley@tzi.de
  *
  * This file is part of java-android-beam-api.
  *
@@ -51,5 +51,7 @@ public interface NFCDevice {
             throws NFCInitalizationException;
 
     public void initalizeWithDefaultValues() throws NFCInitalizationException;
+
+    public void close() throws NFCException;
 
 }

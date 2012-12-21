@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2008 Wilko Oley woley@tzi.de
+ * ﻿Copyright (C) 2012 Wilko Oley woley@tzi.de
  *
  * This file is part of java-android-beam-api.
  *
@@ -39,7 +39,7 @@ package de.estudent.accesscontrol.nfc.reader.acs;
  * 
  * @author Wilko Oley
  */
-public class TouchATagConstants {
+public class ACSConstants {
 
     public static final byte[] ANTENNA_ON = { (byte) 0xFF, (byte) 0x00,
             (byte) 0x00, (byte) 0x00, (byte) 0x04, (byte) 0xD4, (byte) 0x32,
