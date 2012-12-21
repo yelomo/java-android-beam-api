@@ -1,5 +1,5 @@
 /**
- * ﻿Copyright (C) 2008 Wilko Oley woley@tzi.de
+ * ﻿Copyright (C) 2012 Wilko Oley woley@tzi.de
  *
  * This file is part of java-android-beam-api.
  *
@@ -63,7 +63,7 @@ import de.estudent.accesscontrol.nfc.reader.NFCDevice;
  * @author Wilko Oley
  */
 @SuppressWarnings("restriction")
-public class TouchATag implements NFCDevice {
+public class TouchATag extends AcsNFCDevice {
 
     private final static Logger LOG = LoggerFactory.getLogger(TouchATag.class);
 
@@ -131,18 +131,12 @@ public class TouchATag implements NFCDevice {
         putReaderInInitiatorMode();
 
         try {
-            whaitForAndroidBeam(timeout);
-        } catch (InterruptedException e) {
-            LOG.error("Error", e);
-            throw new NFCException("Interrupted", e);
+            NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
+            listener.beamRecieved(message);
         } catch (NdefFormatException e) {
             LOG.error("Error", e);
             throw new NFCException("Format Error", e);
-        } catch (IOException e) {
-            LOG.error("Error", e);
-            throw new NFCException("IO Error", e);
         }
-
     }
 
     public void setBeamReceiveListener(BeamReceiveListener _listener) {
@@ -150,7 +144,7 @@ public class TouchATag implements NFCDevice {
 
     }
 
-    private byte[] sendAndReceive(byte instr, byte[] payload)
+    protected byte[] sendAndReceive(byte instr, byte[] payload)
             throws NFCException {
         int payloadLength = (payload != null) ? payload.length : 0;
         byte[] instruction = { (byte) 0xd4, instr };
@@ -185,7 +179,7 @@ public class TouchATag implements NFCDevice {
     }
 
     private String getFirmewareVersion() throws CardException {
-        CommandAPDU c = new CommandAPDU(TouchATagConstants.GET_FIRMWARE_VERSION);
+        CommandAPDU c = new CommandAPDU(ACSConstants.GET_FIRMWARE_VERSION);
         String s = null;
         s = new String(cardChannel.transmit(c).getBytes());
         return s;
@@ -193,7 +187,7 @@ public class TouchATag implements NFCDevice {
 
     private void turnAntennaOn() throws NFCException {
         LOG.debug("Turning Readers Antenna On!");
-        CommandAPDU c = new CommandAPDU(TouchATagConstants.ANTENNA_ON);
+        CommandAPDU c = new CommandAPDU(ACSConstants.ANTENNA_ON);
         try {
             cardChannel.transmit(c);
         } catch (CardException e) {
@@ -203,147 +197,11 @@ public class TouchATag implements NFCDevice {
 
     private void putReaderInInitiatorMode() throws NFCException {
         LOG.debug("Initiator Mode initalizing");
-        sendAndReceive(TouchATagConstants.IN_JUMP_FOR_DEP,
-                TouchATagConstants.INITIATOR_PAYLOAD);
+        sendAndReceive(ACSConstants.IN_JUMP_FOR_DEP,
+                ACSConstants.INITIATOR_PAYLOAD);
     }
 
-    private void whaitForAndroidBeam(long timeout) throws InterruptedException,
-            NFCException, NdefFormatException, IOException {
-        long endTime = System.currentTimeMillis() + timeout;
-        while (true) {
-            Thread.sleep(150);
-            byte[] targetConnect = { (byte) 0x01, (byte) 0x01, (byte) 0x04,
-                    (byte) 0x20 };
-            byte[] response = sendAndReceive((byte) 0x40, targetConnect);
-            if (response[3] == (byte) 0x11) {
-                LOG.info("Beam recieved, starting handshake");
-                byte[] BEAM_TARGET_CC = { 0x01, (byte) 0x81, (byte) 0x84 };
-                sendAndReceive((byte) 0x40, BEAM_TARGET_CC);
-                startBeamHandshake();
-                break;
-            }
-            if (System.currentTimeMillis() > endTime)
-                throw new NFCException(
-                        "Timeout while whaiting for Touch To Beam!");
-        }
-    }
-
-    // this is were the magic happens!
-    private void startBeamHandshake() throws NFCException, NdefFormatException,
-            InterruptedException, IOException {
-        byte[] BEAM_TARGET_CC = { 0x01, (byte) 0x81, (byte) 0x84 };
-        byte[] target = { 0x01 };
-
-        byte[] targetResponse = { 0x01, (byte) 0x83, (byte) 0x04, 0x00, 0x10,
-                (byte) 0x80 }; // success send me more fragment
-
-        byte[] targetResponseSuccess = { 0x01, (byte) 0x83, (byte) 0x04, 0x00,
-                (byte) 0x10, (byte) 0x81 }; // success no more fragment
-
-        byte[] targetDM = { 0x01, (byte) 0x81, (byte) 0xc4, 0x00 };
-
-        byte[] targetResponseNDEF = { 0x01, (byte) 0x83, (byte) 0x04,
-                (byte) 0x00, 0x10, (byte) 0x02, (byte) 0x00, (byte) 0x00,
-                (byte) 0x00, 0x00 }; // send empty NDEF to Android to tell him
-                                     // we finished
-        int sent = 0;
-        int recieved = 0;
-        NdefMessage ndefMessage = null;
-        try {
-            byte[] response = sendAndReceive(
-                    TouchATagConstants.IN_DATA_EXCHANGE, BEAM_TARGET_CC);
-            recieved++;
-
-            // SNEP Message
-            ByteArrayOutputStream stream = new ByteArrayOutputStream();
-            byte[] snep = getRecievedSNEP(response);
-            stream.write(snep);
-
-            int size = (((snep[2] & 0xff) << 24) | ((snep[3] & 0xff) << 16) | (snep[4] & 0xff) << 8)
-                    | (snep[5] & 0xff);
-
-            // TODO put this in configuration
-            if (size > max_allowed_size)
-                throw new NFCException(
-                        "Message is to long to beam. max_allowed_size "
-                                + max_allowed_size);
-
-            byte[] ndef = NFCHelper.subByteArray(snep, 6, snep.length - 6);
-            int recievedBytes = ndef.length;
-
-            LOG.debug("Recieved Bytes: " + recievedBytes + "," + "Size: "
-                    + size);
-
-            if (recievedBytes == size) {
-                // will not recieve more so create NdefMessage
-                ndefMessage = new NdefMessage(ndef);
-
-                targetResponseNDEF[3] = (byte) ((sent * 16) + recieved);
-                sendAndReceive(TouchATagConstants.IN_DATA_EXCHANGE,
-                        targetResponseNDEF);
-            } else {
-                // recieve more fragments
-                targetResponse[3] = (byte) ((sent * 16) + recieved);
-
-                response = sendAndReceive(TouchATagConstants.IN_DATA_EXCHANGE,
-                        targetResponse);
-                sent++;
-
-                stream.write(getRecievedSNEP(response));
-                while (size > recievedBytes) {
-                    targetResponseNDEF[3] = (byte) ((sent * 16) + recieved);
-
-                    byte[] data = sendAndReceive(
-                            TouchATagConstants.IN_DATA_EXCHANGE,
-                            targetResponseNDEF);
-                    sent++;
-                    if (data[3] == 0x13 & data[4] == 0x20) {
-                        LOG.debug("Fragment recieved");
-
-                        recieved++;
-                        // SNEP Fragment
-                        byte[] fragment = getRecievedSNEP(data);
-
-                        stream.write(fragment);
-                        recievedBytes += fragment.length;
-                        LOG.debug("Recieved Bytes: " + recievedBytes + ","
-                                + "Size: " + size);
-                    }
-                }
-
-                byte[] data = stream.toByteArray();
-                byte[] ndefLong = NFCHelper.subByteArray(data, 6,
-                        data.length - 6);
-                ndefMessage = new NdefMessage(ndefLong);
-            }
-        } finally {
-            targetResponseSuccess[3] = (byte) ((sent * 16) + recieved);
-
-            sendAndReceive(TouchATagConstants.IN_DATA_EXCHANGE,
-                    targetResponseSuccess);
-
-            sendAndReceive(TouchATagConstants.IN_DATA_EXCHANGE, targetDM);
-
-            sendAndReceive(TouchATagConstants.IN_RELEASE, target);
-        }
-        listener.beamRecieved(ndefMessage);
-    }
-
-    private byte[] getRecievedSNEP(byte[] data) {
-
-        // Received LLCP
-        byte[] llcp = NFCHelper.subByteArray(data, 3, data.length - 5);
-
-        // to SNEP protocol message
-        byte[] snep = NFCHelper.subByteArray(llcp, 3, llcp.length - 3);
-
-        return snep;
-        // // SNEP to NDEF Message
-        // byte[] ndef = NFCHelper.subByteArray(snep, 6, snep.length - 6);
-
-    }
-
-    private void close() throws NFCException {
+    public void close() throws NFCException {
         try {
             cardChannel.getCard().disconnect(false);
         } catch (CardException e) {
