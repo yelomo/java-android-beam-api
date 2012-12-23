@@ -177,7 +177,7 @@ public class ACR122UTouchATag extends AcsNFCDevice {
     }
 
     private String getFirmewareVersion() throws CardException {
-        CommandAPDU c = new CommandAPDU(ACSConstants.GET_FIRMWARE_VERSION);
+        CommandAPDU c = new CommandAPDU(AcsConstants.GET_FIRMWARE_VERSION);
         String s = null;
         s = new String(cardChannel.transmit(c).getBytes());
         return s;
@@ -185,18 +185,12 @@ public class ACR122UTouchATag extends AcsNFCDevice {
 
     private void turnAntennaOn() throws NFCException {
         LOG.debug("Turning Readers Antenna On!");
-        CommandAPDU c = new CommandAPDU(ACSConstants.ANTENNA_ON);
+        CommandAPDU c = new CommandAPDU(AcsConstants.ANTENNA_ON);
         try {
             cardChannel.transmit(c);
         } catch (CardException e) {
             throw new NFCException("Error", e);
         }
-    }
-
-    private void putReaderInInitiatorMode() throws NFCException {
-        LOG.debug("Initiator Mode initalizing");
-        sendAndReceive(ACSConstants.IN_JUMP_FOR_DEP,
-                ACSConstants.INITIATOR_PAYLOAD);
     }
 
     public void close() throws NFCException {
