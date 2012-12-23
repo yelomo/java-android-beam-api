@@ -47,26 +47,22 @@ import de.estudent.accesscontrol.nfc.reader.NFCDevice;
 import de.estudent.accesscontrol.nfc.reader.NFCDeviceFactory;
 import de.estudent.accesscontrol.nfc.reader.NFCDeviceType;
 
-/**
- * 
- * @author Wilko Oley
- */
-public class IntegrationTestTouchATag implements BeamReceiveListener {
+public class IntegrationTestACR122U implements BeamReceiveListener {
     private final static Logger LOG = LoggerFactory
-            .getLogger(IntegrationTestTouchATag.class);
+            .getLogger(IntegrationTestACR122U.class);
 
     @Test
     public void test() throws NFCInitalizationException, InterruptedException,
             NFCException {
         NFCDevice device = NFCDeviceFactory
-                .createNFCDevice(NFCDeviceType.TOUCH_A_TAG);
+                .createNFCDevice(NFCDeviceType.ACR122U);
         device.setBeamReceiveListener(this);
         device.initalizeWithDefaultValues();
         device.start();
 
         Thread.sleep(2000);
         LOG.info("FINISHED");
-        device.close();
+
     }
 
     public void beamRecieved(NdefMessage message) {

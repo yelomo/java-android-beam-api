@@ -33,17 +33,9 @@
  */
 package de.estudent.accesscontrol.nfc.reader.acs;
 
-import java.io.ByteArrayOutputStream;
-import java.io.IOException;
 import java.util.List;
 
-import javax.smartcardio.Card;
-import javax.smartcardio.CardChannel;
-import javax.smartcardio.CardException;
-import javax.smartcardio.CardTerminal;
-import javax.smartcardio.CommandAPDU;
-import javax.smartcardio.ResponseAPDU;
-import javax.smartcardio.TerminalFactory;
+import javax.smartcardio.*;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -54,96 +46,71 @@ import de.estudent.accesscontrol.nfc.exceptions.NFCInitalizationException;
 import de.estudent.accesscontrol.nfc.exceptions.NdefFormatException;
 import de.estudent.accesscontrol.nfc.listener.BeamReceiveListener;
 import de.estudent.accesscontrol.nfc.ndef.NdefMessage;
-import de.estudent.accesscontrol.nfc.reader.NFCDevice;
 
-/**
- * This is the class which handles the main Communication with the TouchATag
- * Reader.
- * 
- * @author Wilko Oley
- */
 @SuppressWarnings("restriction")
-public class TouchATag extends AcsNFCDevice {
+public class ACR122U extends AcsNFCDevice {
 
-    private final static Logger LOG = LoggerFactory.getLogger(TouchATag.class);
-
-    CardTerminal terminal = null;
-    CardChannel cardChannel = null;
+    private final static Logger LOG = LoggerFactory.getLogger(ACR122U.class);
 
     BeamReceiveListener listener;
+    CardTerminal terminal = null;
+    Card card = null;
 
     private int max_allowed_size;
     private long timeout;
 
-    /**
-     * Initalize the Touch a Tag with predefined Values for maximal allowed size
-     * and timeout. max_allowed_size = 2048 bytes timeout = 3500 Milisecounds
-     */
     public void initalizeWithDefaultValues() throws NFCInitalizationException {
         initalize(3500, 2048);
     }
-
-    /**
-     * Initalize the Touch a Tag.
-     * 
-     * @param timeout
-     *            How Long we will whait for the user to push the beam UI.
-     * 
-     * @param max_allowed_size
-     *            Size in bytes how big a beam could be maximal.
-     * 
-     */
 
     public void initalize(long timeout, int max_allowed_size)
             throws NFCInitalizationException {
         this.max_allowed_size = max_allowed_size;
         this.timeout = timeout;
+
         try {
             TerminalFactory factory = TerminalFactory.getDefault();
             List<CardTerminal> list = factory.terminals().list();
-
             if (list.size() == 0) {
                 throw new NFCInitalizationException("Card Reader not found!");
             } else {
                 terminal = list.get(0);
                 LOG.info("Card Reader " + terminal.getName() + " found!");
             }
-            if (terminal.isCardPresent()) {
-                Card card = terminal.connect("*");
-                cardChannel = card.getBasicChannel();
-            } else {
-                throw new NFCInitalizationException(
-                        "Reader not supported! Please connect Touch a Tag Reader");
-            }
-
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Reader initalized succesfully!");
-                LOG.debug("Firmeware: " + getFirmewareVersion());
-            }
-        } catch (CardException ex) {
-            throw new NFCInitalizationException("Error", ex);
+        } catch (CardException e) {
+            throw new NFCInitalizationException(
+                    "Error initializing Card Reader", e);
         }
     }
 
     public void start() throws NFCException {
-
-        turnAntennaOn();
-        putReaderInInitiatorMode();
-
         try {
+            terminal.waitForCardPresent(0);
+
+            card = terminal.connect("DIRECT");
+            card.beginExclusive();
+            putReaderInInitiatorMode();
             NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
             listener.beamRecieved(message);
+            card.endExclusive();
+
+        } catch (CardException e) {
+            throw new NFCException("Error connecting to Phone!", e);
         } catch (NdefFormatException e) {
-            LOG.error("Error", e);
-            throw new NFCException("Format Error", e);
+            throw new NFCException("wrong format received", e);
         }
+
     }
 
     public void setBeamReceiveListener(BeamReceiveListener _listener) {
         listener = _listener;
-
     }
 
+    public void close() throws NFCException {
+        throw new RuntimeException("not yet implemented!");
+    }
+
+    @Override
     protected byte[] sendAndReceive(byte instr, byte[] payload)
             throws NFCException {
         int payloadLength = (payload != null) ? payload.length : 0;
@@ -159,54 +126,15 @@ public class TouchATag extends AcsNFCDevice {
 
         NFCHelper.debugAPDUs(LOG, cmd, null);
 
-        CommandAPDU c = new CommandAPDU(cmd);
-        ResponseAPDU r;
+        int controlCode = 0x310000 + 3500 * 4;
+
+        byte[] response = null;
         try {
-            r = cardChannel.transmit(c);
-            NFCHelper.debugAPDUs(LOG, null, r.getBytes());
-            if (r.getSW1() == 0x63 && r.getSW2() == 0x27) {
-                throw new NFCException("Wrong checksum from Response!");
-            } else if (r.getSW1() == 0x63 && r.getSW2() == 0x7f) {
-                throw new NFCException("Wrong PN53x command!");
-            } else if (r.getSW1() != 0x90 && r.getSW2() != 0x00) {
-                throw new NFCException("General error");
-            }
+            response = card.transmitControlCommand(controlCode, cmd);
         } catch (CardException e) {
-            throw new NFCException("Error", e);
+            throw new NFCException("Error transmitting!", e);
         }
-
-        return r.getBytes();
-    }
-
-    private String getFirmewareVersion() throws CardException {
-        CommandAPDU c = new CommandAPDU(ACSConstants.GET_FIRMWARE_VERSION);
-        String s = null;
-        s = new String(cardChannel.transmit(c).getBytes());
-        return s;
-    }
-
-    private void turnAntennaOn() throws NFCException {
-        LOG.debug("Turning Readers Antenna On!");
-        CommandAPDU c = new CommandAPDU(ACSConstants.ANTENNA_ON);
-        try {
-            cardChannel.transmit(c);
-        } catch (CardException e) {
-            throw new NFCException("Error", e);
-        }
-    }
-
-    private void putReaderInInitiatorMode() throws NFCException {
-        LOG.debug("Initiator Mode initalizing");
-        sendAndReceive(ACSConstants.IN_JUMP_FOR_DEP,
-                ACSConstants.INITIATOR_PAYLOAD);
-    }
-
-    public void close() throws NFCException {
-        try {
-            cardChannel.getCard().disconnect(false);
-        } catch (CardException e) {
-            throw new NFCException("Error", e);
-        }
+        return response;
     }
 
 }

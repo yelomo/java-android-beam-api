@@ -107,8 +107,8 @@ abstract class AcsNFCDevice implements NFCDevice {
         int recieved = 0;
         NdefMessage ndefMessage = null;
         try {
-            byte[] response = sendAndReceive(
-                    ACSConstants.IN_DATA_EXCHANGE, BEAM_TARGET_CC);
+            byte[] response = sendAndReceive(AcsConstants.IN_DATA_EXCHANGE,
+                    BEAM_TARGET_CC);
             recieved++;
 
             // SNEP Message
@@ -135,13 +135,13 @@ abstract class AcsNFCDevice implements NFCDevice {
                 ndefMessage = new NdefMessage(ndef);
 
                 targetResponseNDEF[3] = (byte) ((sent * 16) + recieved);
-                sendAndReceive(ACSConstants.IN_DATA_EXCHANGE,
+                sendAndReceive(AcsConstants.IN_DATA_EXCHANGE,
                         targetResponseNDEF);
             } else {
                 // recieve more fragments
                 targetResponse[3] = (byte) ((sent * 16) + recieved);
 
-                response = sendAndReceive(ACSConstants.IN_DATA_EXCHANGE,
+                response = sendAndReceive(AcsConstants.IN_DATA_EXCHANGE,
                         targetResponse);
                 sent++;
 
@@ -149,8 +149,7 @@ abstract class AcsNFCDevice implements NFCDevice {
                 while (size > recievedBytes) {
                     targetResponseNDEF[3] = (byte) ((sent * 16) + recieved);
 
-                    byte[] data = sendAndReceive(
-                            ACSConstants.IN_DATA_EXCHANGE,
+                    byte[] data = sendAndReceive(AcsConstants.IN_DATA_EXCHANGE,
                             targetResponseNDEF);
                     sent++;
                     if (data[3] == 0x13 & data[4] == 0x20) {
@@ -177,12 +176,11 @@ abstract class AcsNFCDevice implements NFCDevice {
         } finally {
             targetResponseSuccess[3] = (byte) ((sent * 16) + recieved);
 
-            sendAndReceive(ACSConstants.IN_DATA_EXCHANGE,
-                    targetResponseSuccess);
+            sendAndReceive(AcsConstants.IN_DATA_EXCHANGE, targetResponseSuccess);
 
-            sendAndReceive(ACSConstants.IN_DATA_EXCHANGE, targetDM);
+            sendAndReceive(AcsConstants.IN_DATA_EXCHANGE, targetDM);
 
-            sendAndReceive(ACSConstants.IN_RELEASE, target);
+            sendAndReceive(AcsConstants.IN_RELEASE, target);
         }
         return ndefMessage;
     }
@@ -196,9 +194,12 @@ abstract class AcsNFCDevice implements NFCDevice {
         byte[] snep = NFCHelper.subByteArray(llcp, 3, llcp.length - 3);
 
         return snep;
-        // // SNEP to NDEF Message
-        // byte[] ndef = NFCHelper.subByteArray(snep, 6, snep.length - 6);
+    }
 
+    protected void putReaderInInitiatorMode() throws NFCException {
+        LOG.debug("Initiator Mode initalizing");
+        sendAndReceive(AcsConstants.IN_JUMP_FOR_DEP,
+                AcsConstants.INITIATOR_PAYLOAD);
     }
 
 }

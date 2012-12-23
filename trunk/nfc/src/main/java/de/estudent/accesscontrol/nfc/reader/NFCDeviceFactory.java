@@ -33,7 +33,8 @@
  */
 package de.estudent.accesscontrol.nfc.reader;
 
-import de.estudent.accesscontrol.nfc.reader.acs.TouchATag;
+import de.estudent.accesscontrol.nfc.reader.acs.ACR122U;
+import de.estudent.accesscontrol.nfc.reader.acs.ACR122UTouchATag;
 
 /**
  * 
@@ -45,9 +46,11 @@ public class NFCDeviceFactory {
 
         switch (type) {
         case TOUCH_A_TAG:
-            return new TouchATag();
+            return new ACR122UTouchATag();
+        case ACR122U:
+            return new ACR122U();
         default:
-            return new TouchATag();
+            return new ACR122UTouchATag();
         }
 
     }
