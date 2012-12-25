@@ -56,6 +56,8 @@ public class ACR122U extends AcsNFCDevice {
     CardTerminal terminal = null;
     Card card = null;
 
+    private String osName = null;
+
     private int max_allowed_size;
     private long timeout;
 
@@ -67,6 +69,7 @@ public class ACR122U extends AcsNFCDevice {
             throws NFCInitalizationException {
         this.max_allowed_size = max_allowed_size;
         this.timeout = timeout;
+        osName = System.getProperty("os.name");
 
         try {
             TerminalFactory factory = TerminalFactory.getDefault();
@@ -86,7 +89,7 @@ public class ACR122U extends AcsNFCDevice {
     public void start() throws NFCException {
         try {
             terminal.waitForCardPresent(0);
-
+            Thread.sleep(100);
             card = terminal.connect("DIRECT");
             card.beginExclusive();
             putReaderInInitiatorMode();
@@ -98,6 +101,8 @@ public class ACR122U extends AcsNFCDevice {
             throw new NFCException("Error connecting to Phone!", e);
         } catch (NdefFormatException e) {
             throw new NFCException("wrong format received", e);
+        } catch (InterruptedException e) {
+            throw new NFCException("Interrupted while sleeping", e);
         }
 
     }
@@ -125,8 +130,12 @@ public class ACR122U extends AcsNFCDevice {
         cmd = NFCHelper.append(cmd, payload);
 
         NFCHelper.debugAPDUs(LOG, cmd, null);
-
-        int controlCode = 0x310000 + 3500 * 4;
+        int controlCode;
+        if (osName.startsWith("Windows")) {
+            controlCode = 0x310000 + 3500 * 4;
+        } else {
+            controlCode = 0x42000D48;
+        }
 
         byte[] response = null;
         try {
