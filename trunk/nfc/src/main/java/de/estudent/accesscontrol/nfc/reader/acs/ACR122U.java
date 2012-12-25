@@ -134,7 +134,7 @@ public class ACR122U extends AcsNFCDevice {
         if (osName.startsWith("Windows")) {
             controlCode = 0x310000 + 3500 * 4;
         } else {
-            controlCode = 0x42000D48;
+            controlCode = 0x42000000 + 3500;
         }
 
         byte[] response = null;
