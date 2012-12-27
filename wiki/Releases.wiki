@@ -16,3 +16,4 @@ _Initial Release_
 = Future Releases =
 ===Version 1.0.0===
  * - support the ACR122U 207
+ * - autodetection of reader type
