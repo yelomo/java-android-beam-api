@@ -31,13 +31,38 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
  */
-package de.estudent.accesscontrol.nfc.reader;
+package de.estudent.accesscontrol.nfc.reader.acs;
 
-/**
- * 
- * @author Wilko Oley
- */
-public enum NFCDeviceType {
+import static org.junit.Assert.*;
 
-    TOUCH_A_TAG, ACR122U, AUTODETECT;
+import org.junit.Test;
+
+import de.estudent.accesscontrol.nfc.reader.NFCDevice;
+import de.estudent.accesscontrol.nfc.reader.NFCDeviceFactory;
+import de.estudent.accesscontrol.nfc.reader.NFCDeviceType;
+
+public class IntegrationTestAutodetection {
+
+    @Test
+    public void testCreateNFCDeviceTouchATag() {
+        NFCDevice device = NFCDeviceFactory
+                .createNFCDevice(NFCDeviceType.AUTODETECT);
+
+        if (device instanceof ACR122UTouchATag)
+            assertTrue(true);
+        else fail("Reader not as TouchATag detected!" + device.getClass());
+
+    }
+
+    @Test
+    public void testCreateNFCDeviceACR122() {
+        NFCDevice device = NFCDeviceFactory
+                .createNFCDevice(NFCDeviceType.AUTODETECT);
+
+        if (device instanceof ACR122U)
+            assertTrue(true);
+        else fail("Reader not as ACR122U detected!" + device.getClass());
+
+    }
+
 }
