@@ -31,7 +31,7 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
  */
-package de.estudent.accesscontrol.nfc.reader.acs;
+package de.estudent.nfc.reader.acs;
 
 import static org.junit.Assert.*;
 
@@ -39,30 +39,34 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.estudent.accesscontrol.nfc.exceptions.NFCException;
-import de.estudent.accesscontrol.nfc.exceptions.NFCInitalizationException;
-import de.estudent.accesscontrol.nfc.listener.BeamReceiveListener;
-import de.estudent.accesscontrol.nfc.ndef.NdefMessage;
-import de.estudent.accesscontrol.nfc.reader.NFCDevice;
-import de.estudent.accesscontrol.nfc.reader.NFCDeviceFactory;
-import de.estudent.accesscontrol.nfc.reader.NFCDeviceType;
+import de.estudent.nfc.exceptions.NFCException;
+import de.estudent.nfc.exceptions.NFCInitalizationException;
+import de.estudent.nfc.listener.BeamReceiveListener;
+import de.estudent.nfc.ndef.NdefMessage;
+import de.estudent.nfc.reader.NFCDevice;
+import de.estudent.nfc.reader.NFCDeviceFactory;
+import de.estudent.nfc.reader.NFCDeviceType;
 
-public class IntegrationTestACR122U implements BeamReceiveListener {
+/**
+ * 
+ * @author Wilko Oley
+ */
+public class IntegrationTestACR122UTouchATag implements BeamReceiveListener {
     private final static Logger LOG = LoggerFactory
-            .getLogger(IntegrationTestACR122U.class);
+            .getLogger(IntegrationTestACR122UTouchATag.class);
 
     @Test
     public void test() throws NFCInitalizationException, InterruptedException,
             NFCException {
         NFCDevice device = NFCDeviceFactory
-                .createNFCDevice(NFCDeviceType.ACR122U);
+                .createNFCDevice(NFCDeviceType.TOUCH_A_TAG);
         device.setBeamReceiveListener(this);
         device.initalizeWithDefaultValues();
         device.start();
 
         Thread.sleep(2000);
         LOG.info("FINISHED");
-
+        device.close();
     }
 
     public void beamRecieved(NdefMessage message) {

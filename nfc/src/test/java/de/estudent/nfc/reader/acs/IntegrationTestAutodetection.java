@@ -31,55 +31,38 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
  */
-package de.estudent.accesscontrol.nfc.ndef;
+package de.estudent.nfc.reader.acs;
 
 import static org.junit.Assert.*;
 
-import org.apache.commons.lang3.ArrayUtils;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import de.estudent.accesscontrol.nfc.NFCHelper;
-import de.estudent.accesscontrol.nfc.exceptions.NdefFormatException;
+import de.estudent.nfc.reader.NFCDevice;
+import de.estudent.nfc.reader.NFCDeviceFactory;
+import de.estudent.nfc.reader.NFCDeviceType;
 
-/**
- * 
- * @author Wilko Oley
- */
-public class TestNdefMessage {
-
-    private final static Logger LOG = LoggerFactory
-            .getLogger(TestNdefMessage.class);
+public class IntegrationTestAutodetection {
 
     @Test
-    public void parseShortNdefMessage() throws NdefFormatException {
+    public void testCreateNFCDeviceTouchATag() {
+        NFCDevice device = NFCDeviceFactory
+                .createNFCDevice(NFCDeviceType.AUTODETECT);
 
-        byte[] ndefData = NFCHelper.subByteArray(
-                SNEPTestData.GALAXY_NEXUS_SNEP_SHORT, 6,
-                SNEPTestData.GALAXY_NEXUS_SNEP_SHORT.length - 6);
-
-        NdefMessage ndefMessage = new NdefMessage(ndefData);
-
-        LOG.info(new String(ndefMessage.getPayload()));
-
-        assertArrayEquals(SNEPTestData.GALAXY_NEXS_SHORT_PAYLOAD,
-                ndefMessage.getPayload());
+        if (device instanceof ACR122UTouchATag)
+            assertTrue(true);
+        else fail("Reader not as TouchATag detected!" + device.getClass());
 
     }
 
     @Test
-    public void parseLongNdefMessage() throws NdefFormatException {
+    public void testCreateNFCDeviceACR122() {
+        NFCDevice device = NFCDeviceFactory
+                .createNFCDevice(NFCDeviceType.AUTODETECT);
 
-        byte[] ndefData = NFCHelper.subByteArray(
-                SNEPTestData.GALAXY_NEXUS_SNEP_LONG, 6,
-                SNEPTestData.GALAXY_NEXUS_SNEP_LONG.length - 6);
-
-        NdefMessage ndefMessage = new NdefMessage(ndefData);
-        LOG.info(new String(ndefMessage.getPayload()));
-
-        assertArrayEquals(SNEPTestData.GALAXY_NEXUS_LONG_PAYLOAD,
-                ndefMessage.getPayload());
+        if (device instanceof ACR122U)
+            assertTrue(true);
+        else fail("Reader not as ACR122U detected!" + device.getClass());
 
     }
+
 }

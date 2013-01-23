@@ -31,10 +31,10 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
  */
-package de.estudent.accesscontrol.nfc.ndef;
+package de.estudent.nfc.ndef;
 
 import org.apache.commons.lang3.ArrayUtils;
-import de.estudent.accesscontrol.nfc.exceptions.NdefFormatException;
+import de.estudent.nfc.exceptions.NdefFormatException;
 
 /**
  * 

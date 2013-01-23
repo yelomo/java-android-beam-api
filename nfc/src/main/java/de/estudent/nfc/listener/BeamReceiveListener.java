@@ -31,14 +31,14 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
  */
-package de.estudent.accesscontrol.nfc.listener;
+package de.estudent.nfc.listener;
+
+import de.estudent.nfc.ndef.NdefMessage;
 
 /**
  * 
  * @author Wilko Oley
  */
-import de.estudent.accesscontrol.nfc.ndef.NdefMessage;
-
 public interface BeamReceiveListener {
 
     public void beamRecieved(NdefMessage message);
