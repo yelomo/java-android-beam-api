@@ -31,14 +31,14 @@
  * Sie sollten eine Kopie der GNU General Public License zusammen mit diesem
  * Programm erhalten haben. Wenn nicht, siehe <http://www.gnu.org/licenses/>.
  */
-package de.estudent.accesscontrol.nfc;
+package de.estudent.nfc;
 
 import org.junit.runner.RunWith;
 import org.junit.runners.Suite;
 import org.junit.runners.Suite.SuiteClasses;
 
-import de.estudent.accesscontrol.nfc.ndef.TestNdefMessage;
-import de.estudent.accesscontrol.nfc.ndef.TestNdefRecord;
+import de.estudent.nfc.ndef.TestNdefMessage;
+import de.estudent.nfc.ndef.TestNdefRecord;
 
 @RunWith(Suite.class)
 @SuiteClasses({ TestNdefMessage.class, TestNdefRecord.class })
