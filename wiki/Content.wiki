@@ -7,5 +7,3 @@
 * [Releases Changelog and Releases]
 
 * [mixed General resources]
-
-* Compile it yourself
