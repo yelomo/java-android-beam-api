@@ -25,3 +25,38 @@ include the NFC-API with the following lines in your pom:
    <version> VERSION NUMBER </version>
 </dependency>
 }}}
+<hr>
+== Start Coding ==
+Now you are ready to use our API in your Maven Project.
+
+Next step would be to implement a BeamReceiveListener like this
+{{{
+public class MyListener implements BeamReceiveListener {
+
+    public void beamRecieved(NdefMessage message) {
+        // handle the message here
+    }
+}
+}}}
+
+Now you can initalize your NFC Reader and start the Android Beam Handshake.
+
+{{{
+public static void main(String[] args) {
+    NFCDevice device = NFCDeviceFactory
+            .createNFCDevice(NFCDeviceType.AUTODETECT);
+    device.setBeamReceiveListener(this);
+    device.initalizeWithDefaultValues();
+    device.start();  // the device will whait for the Android Device now
+}
+}}}
+
+
+
+
+
+
+
+
+
+
