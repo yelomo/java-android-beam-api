@@ -1,4 +1,4 @@
-= This Page is for general Code Samples =
+= This Page is for general Samples and Help =
 
 
 == Firmeware Version via direct connect ==
@@ -20,3 +20,16 @@ byte[] response = card.transmitControlCommand(controlCode,
 
 System.out.println("Firmeware: " + new String(response));
 </code>
+
+== PCSC-lite and linux ==
+
+You need the following packages, so execude 
+<code>sudo apt-get install libpcsclite1 pcscd libccid libpcsclite-dev</code>
+
+In some Versions the JVM only searches for the pcsclite libs under /usr/lib64:/usr/local/lib:/usr/local/lib64. If your libpcsclite.so.1 is in another directory you can correct it by setting the System Variable  JAVA_OPTIONS. For example
+<code>_JAVA_OPTIONS="-Dsun.security.smartcardio.library=/lib/x86_64-linux-gnu/libpcsclite.so.1"</code>
+
+Maybe this page will help you with some problems:
+https://wiki.archlinux.org/index.php/Touchatag_RFID_Reader
+
+_We had to set the ifdDriverOptions, to work with our reader_
