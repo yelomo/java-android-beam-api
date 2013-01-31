@@ -33,3 +33,5 @@ Maybe this page will help you with some problems:
 https://wiki.archlinux.org/index.php/Touchatag_RFID_Reader
 
 _We had to set the ifdDriverOptions, to work with our reader_
+
+This part is under construction and will be updated frequently! If you have some comments please contact me!
