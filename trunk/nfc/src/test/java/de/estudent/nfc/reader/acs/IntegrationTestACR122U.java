@@ -54,14 +54,19 @@ public class IntegrationTestACR122U implements BeamReceiveListener {
     @Test
     public void test() throws NFCInitalizationException, InterruptedException,
             NFCException {
+
         NFCDevice device = NFCDeviceFactory
                 .createNFCDevice(NFCDeviceType.ACR122U);
-        device.setBeamReceiveListener(this);
-        device.initalizeWithDefaultValues();
-        device.start();
+        while (true) {
 
-        Thread.sleep(2000);
-        LOG.info("FINISHED");
+            device.setBeamReceiveListener(this);
+            device.initalizeWithDefaultValues();
+            device.start();
+            device.close();
+            Thread.sleep(2000);
+
+            LOG.info("FINISHED");
+        }
 
     }
 

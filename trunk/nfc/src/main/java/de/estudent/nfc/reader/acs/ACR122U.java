@@ -91,11 +91,11 @@ public class ACR122U extends AcsNFCDevice {
             terminal.waitForCardPresent(0);
             Thread.sleep(100);
             card = terminal.connect("DIRECT");
-            card.beginExclusive();
+            // card.beginExclusive();
             putReaderInInitiatorMode();
             NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
             listener.beamRecieved(message);
-            card.endExclusive();
+            // card.endExclusive();
 
         } catch (CardException e) {
             throw new NFCException("Error connecting to Phone!", e);
@@ -112,7 +112,13 @@ public class ACR122U extends AcsNFCDevice {
     }
 
     public void close() throws NFCException {
-        throw new RuntimeException("not yet implemented!");
+        try {
+            card.disconnect(false);
+            card = null;
+            terminal = null;
+        } catch (CardException e) {
+            throw new NFCException(e);
+        }
     }
 
     @Override
