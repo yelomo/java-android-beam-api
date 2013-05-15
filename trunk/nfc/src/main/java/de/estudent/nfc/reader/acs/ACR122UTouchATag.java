@@ -63,7 +63,7 @@ import de.estudent.nfc.ndef.NdefMessage;
 public class ACR122UTouchATag extends AcsNFCDevice {
 
     private final static Logger LOG = LoggerFactory
-            .getLogger(ACR122UTouchATag.class);
+	    .getLogger(ACR122UTouchATag.class);
 
     CardTerminal terminal = null;
     CardChannel cardChannel = null;
@@ -78,7 +78,7 @@ public class ACR122UTouchATag extends AcsNFCDevice {
      * and timeout. max_allowed_size = 2048 bytes timeout = 3500 Milisecounds
      */
     public void initalizeWithDefaultValues() throws NFCInitalizationException {
-        initalize(3500, 2048);
+	initalize(3500, 2048);
     }
 
     /**
@@ -93,112 +93,114 @@ public class ACR122UTouchATag extends AcsNFCDevice {
      */
 
     public void initalize(long timeout, int max_allowed_size)
-            throws NFCInitalizationException {
-        this.max_allowed_size = max_allowed_size;
-        this.timeout = timeout;
-        try {
-            TerminalFactory factory = TerminalFactory.getDefault();
-            List<CardTerminal> list = factory.terminals().list();
+	    throws NFCInitalizationException {
+	this.max_allowed_size = max_allowed_size;
+	this.timeout = timeout;
+	try {
+	    TerminalFactory factory = TerminalFactory.getDefault();
+	    List<CardTerminal> list = factory.terminals().list();
 
-            if (list.size() == 0) {
-                throw new NFCInitalizationException("Card Reader not found!");
-            } else {
-                terminal = list.get(0);
-                LOG.info("Card Reader " + terminal.getName() + " found!");
-            }
-            if (terminal.isCardPresent()) {
-                Card card = terminal.connect("*");
-                cardChannel = card.getBasicChannel();
-            } else {
-                throw new NFCInitalizationException(
-                        "Reader not supported! Please connect Touch a Tag Reader");
-            }
+	    if (list.size() == 0) {
+		throw new NFCInitalizationException("Card Reader not found!");
+	    } else {
+		terminal = list.get(0);
+		LOG.info("Card Reader " + terminal.getName() + " found!");
+	    }
+	    if (terminal.isCardPresent()) {
+		Card card = terminal.connect("*");
+		cardChannel = card.getBasicChannel();
+	    } else {
+		throw new NFCInitalizationException(
+			"Reader not supported! Please connect Touch a Tag Reader");
+	    }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Reader initalized succesfully!");
-                LOG.debug("Firmeware: " + getFirmewareVersion());
-            }
-        } catch (CardException ex) {
-            throw new NFCInitalizationException("Error", ex);
-        }
+	    if (LOG.isDebugEnabled()) {
+		LOG.debug("Reader initalized succesfully!");
+		LOG.debug("Firmeware: " + getFirmewareVersion());
+	    }
+	} catch (CardException ex) {
+	    throw new NFCInitalizationException("Error", ex);
+	}
     }
 
     public void start() throws NFCException {
 
-        turnAntennaOn();
-        putReaderInInitiatorMode();
+	turnAntennaOn();
+	putReaderInInitiatorMode();
 
-        try {
-            NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
-            listener.beamRecieved(message);
-        } catch (NdefFormatException e) {
-            LOG.error("Error", e);
-            throw new NFCException("Format Error", e);
-        }
+	try {
+	    NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
+	    listener.beamRecieved(message);
+	} catch (NdefFormatException e) {
+	    LOG.error("Error", e);
+	    throw new NFCException("Format Error", e);
+	}
     }
 
     public void setBeamReceiveListener(BeamReceiveListener _listener) {
-        listener = _listener;
+	listener = _listener;
 
     }
 
     protected byte[] sendAndReceive(byte instr, byte[] payload)
-            throws NFCException {
-        int payloadLength = (payload != null) ? payload.length : 0;
-        byte[] instruction = { (byte) 0xd4, instr };
+	    throws NFCException {
+	int payloadLength = (payload != null) ? payload.length : 0;
+	byte[] instruction = { (byte) 0xd4, instr };
 
-        // ACR122 header
-        byte[] header = { (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) (instruction.length + payloadLength) };
+	// ACR122 header
+	byte[] header = { (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+		(byte) (instruction.length + payloadLength) };
 
-        byte[] cmd = NFCHelper.append(header, instruction);
+	byte[] cmd = NFCHelper.append(header, instruction);
 
-        cmd = NFCHelper.append(cmd, payload);
+	cmd = NFCHelper.append(cmd, payload);
 
-        NFCHelper.debugAPDUs(LOG, cmd, null);
+	NFCHelper.debugAPDUs(LOG, cmd, null);
 
-        CommandAPDU c = new CommandAPDU(cmd);
-        ResponseAPDU r;
-        try {
-            r = cardChannel.transmit(c);
-            NFCHelper.debugAPDUs(LOG, null, r.getBytes());
-            if (r.getSW1() == 0x63 && r.getSW2() == 0x27) {
-                throw new NFCException("Wrong checksum from Response!");
-            } else if (r.getSW1() == 0x63 && r.getSW2() == 0x7f) {
-                throw new NFCException("Wrong PN53x command!");
-            } else if (r.getSW1() != 0x90 && r.getSW2() != 0x00) {
-                throw new NFCException("General error");
-            }
-        } catch (CardException e) {
-            throw new NFCException("Error", e);
-        }
+	CommandAPDU c = new CommandAPDU(cmd);
+	ResponseAPDU r;
+	try {
+	    r = cardChannel.transmit(c);
+	    NFCHelper.debugAPDUs(LOG, null, r.getBytes());
+	    if (r.getSW1() == 0x63 && r.getSW2() == 0x27) {
+		throw new NFCException("Wrong checksum from Response!");
+	    } else if (r.getSW1() == 0x63 && r.getSW2() == 0x7f) {
+		throw new NFCException("Wrong PN53x command!");
+	    } else if (r.getSW1() != 0x90 && r.getSW2() != 0x00) {
+		throw new NFCException("General error");
+	    }
+	} catch (CardException e) {
+	    throw new NFCException("Error", e);
+	}
 
-        return r.getBytes();
+	return r.getBytes();
     }
 
     private String getFirmewareVersion() throws CardException {
-        CommandAPDU c = new CommandAPDU(AcsConstants.GET_FIRMWARE_VERSION);
-        String s = null;
-        s = new String(cardChannel.transmit(c).getBytes());
-        return s;
+	CommandAPDU c = new CommandAPDU(AcsConstants.GET_FIRMWARE_VERSION);
+	String s = null;
+	s = new String(cardChannel.transmit(c).getBytes());
+	return s;
     }
 
     private void turnAntennaOn() throws NFCException {
-        LOG.debug("Turning Readers Antenna On!");
-        CommandAPDU c = new CommandAPDU(AcsConstants.ANTENNA_ON);
-        try {
-            cardChannel.transmit(c);
-        } catch (CardException e) {
-            throw new NFCException("Error", e);
-        }
+	LOG.debug("Turning Readers Antenna On!");
+	CommandAPDU c = new CommandAPDU(AcsConstants.ANTENNA_ON);
+	try {
+	    cardChannel.transmit(c);
+	} catch (CardException e) {
+	    throw new NFCException("Error", e);
+	}
     }
 
     public void close() throws NFCException {
-        try {
-            cardChannel.getCard().disconnect(false);
-        } catch (CardException e) {
-            throw new NFCException("Error", e);
-        }
+	try {
+	    if (cardChannel != null) {
+		cardChannel.getCard().disconnect(false);
+	    }
+	} catch (CardException e) {
+	    throw new NFCException("Error", e);
+	}
     }
 
 }

@@ -113,7 +113,9 @@ public class ACR122U extends AcsNFCDevice {
 
     public void close() throws NFCException {
         try {
-            card.disconnect(false);
+            if(card != null){
+        	card.disconnect(false);        	
+            }
             card = null;
             terminal = null;
         } catch (CardException e) {
