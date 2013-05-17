@@ -33,6 +33,8 @@
  */
 package de.estudent.nfc.ndef;
 
+import java.nio.ByteBuffer;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -71,120 +73,114 @@ public class NdefRecord {
     public static final byte IL = (byte) 1 << 3;
 
     public NdefRecord(byte[] data) throws NdefFormatException {
-        parseNdefRecord(data);
+	parseNdefRecord(data);
     }
 
     public short getTnf() {
-        return tnf;
+	return tnf;
     }
 
     public String getTnfAsString() {
-        switch (tnf) {
-        case TNF_EMPTY:
-            return "TNF_EMPTY";
-        case TNF_WELL_KNOWN:
-            return "TNF_WELL_KNOWN";
-        case TNF_MIME_MEDIA:
-            return "TNF_MIME_MEDIA";
-        case TNF_ABSOLUTE_URI:
-            return "TNF_ABSOLUTE_URI";
-        case TNF_EXTERNAL_TYPE:
-            return "TNF_EXTERNAL_TYPE";
-        case TNF_UNKNOWN:
-            return "TNF_UNKNOWN";
-        case TNF_UNCHANGED:
-            return "TNF_UNCHANGED";
-        case TNF_RESERVED:
-            return "TNF_RESERVED";
-        default:
-            return null;
-        }
+	switch (tnf) {
+	case TNF_EMPTY:
+	    return "TNF_EMPTY";
+	case TNF_WELL_KNOWN:
+	    return "TNF_WELL_KNOWN";
+	case TNF_MIME_MEDIA:
+	    return "TNF_MIME_MEDIA";
+	case TNF_ABSOLUTE_URI:
+	    return "TNF_ABSOLUTE_URI";
+	case TNF_EXTERNAL_TYPE:
+	    return "TNF_EXTERNAL_TYPE";
+	case TNF_UNKNOWN:
+	    return "TNF_UNKNOWN";
+	case TNF_UNCHANGED:
+	    return "TNF_UNCHANGED";
+	case TNF_RESERVED:
+	    return "TNF_RESERVED";
+	default:
+	    return null;
+	}
     }
 
     private void parseNdefRecord(byte[] data) {
+	ByteBuffer buffer = ByteBuffer.wrap(data);
+	byte header = buffer.get();
+	byte mFlags = (byte) (header & 0x7c);
 
-        byte header = data[0];
+	this.tnf = (byte) (header & 0x07);
 
-        tnf = (byte) (header & header << 1 & header << 2);
+	int payloadLength;
+	byte idLength = 0x00;
 
-        int typeLength = data[1] & 0xFF;
-        int payloadLength;
-        int idLength;
+	byte typeLength = buffer.get();
+	if ((mFlags & SR) > 0) {
+	    LOG.debug("Short Record");
+	    payloadLength = 0xFF & buffer.get();
+	} else {
+	    LOG.debug("Long Record");
+	    payloadLength = buffer.getInt();
+	}
+	if ((mFlags & IL) > 0) {
+	    idLength = buffer.get();
+	}
 
-        int start;
-        if ((header & NdefRecord.SR) > 0) {
-            LOG.debug("Short Record");
-            payloadLength = data[2] & 0xFF;
-            start = 3;
-        } else {
-            LOG.debug("Long Record");
-            payloadLength = data[5] + (data[4] << 8) + (data[3] << 16)
-                    + (data[2] << 24);
-            start = 6;
-        }
-        if ((header & NdefRecord.IL) > 0) {
-            idLength = data[start] & 0xFF;
-            start++;
-        } else {
-            idLength = 0;
-        }
+	type = new byte[typeLength];
+	buffer.get(type);
 
-        type = NFCHelper.subByteArray(data, start, typeLength);
+	id = new byte[idLength];
+	buffer.get(id);
 
-        id = NFCHelper.subByteArray(data, typeLength + start, idLength);
+	payload = new byte[payloadLength];
+	buffer.get(payload);
 
-        payload = NFCHelper.subByteArray(data, typeLength + idLength + start,
-                payloadLength);
-
-        length = typeLength + idLength + start + payloadLength;
-
-        LOG.debug("NDEF Record created: ");
-        LOG.debug("TNF " + getTnfAsString());
-        LOG.debug("data " + data.length);
-        LOG.debug("payload " + payloadLength);
-        LOG.debug("typelength " + typeLength);
-        LOG.debug("idlength " + idLength);
-        LOG.debug("Total Length:" + getLength());
+	LOG.debug("NDEF Record created: ");
+	LOG.debug("TNF " + getTnfAsString());
+	LOG.debug("data " + data.length);
+	LOG.debug("payload " + payloadLength);
+	LOG.debug("typelength " + typeLength);
+	LOG.debug("idlength " + idLength);
+	LOG.debug("Total Length:" + getLength());
     }
 
     public byte[] getType() {
-        return type.clone();
+	return type.clone();
     }
 
     public byte[] getId() {
-        return id.clone();
+	return id.clone();
     }
 
     public byte[] getPayload() {
-        return payload.clone();
+	return payload.clone();
     }
 
     public int getLength() {
-        return length;
+	return length;
     }
 
     protected void setTnf(byte tnf) {
-        this.tnf = tnf;
+	this.tnf = tnf;
     }
 
     protected void setType(byte[] type) {
-        this.type = type;
+	this.type = type;
     }
 
     protected void setId(byte[] id) {
-        this.id = id;
+	this.id = id;
     }
 
     protected void setPayload(byte[] payload) {
-        this.payload = payload;
+	this.payload = payload;
     }
 
     protected void setLength(int length) {
-        this.length = length;
+	this.length = length;
     }
 
     protected Thread getParserThread() {
-        return parserThread;
+	return parserThread;
     }
 
 }
