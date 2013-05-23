@@ -41,6 +41,6 @@ import de.estudent.nfc.ndef.NdefMessage;
  */
 public interface BeamReceiveListener {
 
-    public void beamRecieved(NdefMessage message);
+	public void beamRecieved(NdefMessage message);
 
 }

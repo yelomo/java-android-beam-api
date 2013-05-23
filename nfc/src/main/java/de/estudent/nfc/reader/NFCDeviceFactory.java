@@ -53,64 +53,64 @@ import de.estudent.nfc.reader.acs.ACR122UTouchATag;
  */
 public class NFCDeviceFactory {
 
-    private final static Logger LOG = LoggerFactory
-            .getLogger(NFCDeviceFactory.class);
+	private final static Logger LOG = LoggerFactory
+			.getLogger(NFCDeviceFactory.class);
 
-    /**
-     * This Method will create a new NFCDevice in the given
-     * {@link NFCDeviceType}. The Type "autodetection" should be handled with
-     * care, it can lead to wrong results and should only be used for initial
-     * testing and not in production!
-     * 
-     * @param type
-     *            The type of the connectet NFCReader
-     * @return an NFCDevice with the given type
-     */
-    public static NFCDevice createNFCDevice(NFCDeviceType type) {
+	/**
+	 * This Method will create a new NFCDevice in the given
+	 * {@link NFCDeviceType}. The Type "autodetection" should be handled with
+	 * care, it can lead to wrong results and should only be used for initial
+	 * testing and not in production!
+	 * 
+	 * @param type
+	 *            The type of the connectet NFCReader
+	 * @return an NFCDevice with the given type
+	 */
+	public static NFCDevice createNFCDevice(NFCDeviceType type) {
 
-        if (type == NFCDeviceType.AUTODETECT)
-            type = findConnectedDevice();
+		if (type == NFCDeviceType.AUTODETECT)
+			type = findConnectedDevice();
 
-        switch (type) {
-        case TOUCH_A_TAG:
-            return new ACR122UTouchATag();
-        case ACR122U:
-            return new ACR122U();
-        default:
-            return null;
-        }
+		switch (type) {
+		case TOUCH_A_TAG:
+			return new ACR122UTouchATag();
+		case ACR122U:
+			return new ACR122U();
+		default:
+			return null;
+		}
 
-    }
+	}
 
-    @SuppressWarnings("restriction")
-    private static NFCDeviceType findConnectedDevice() {
-        CardTerminal terminal;
-        try {
-            TerminalFactory factory = TerminalFactory.getDefault();
-            List<CardTerminal> list = factory.terminals().list();
-            if (list.isEmpty())
-                return null;
-            terminal = list.get(0);
-            LOG.info("Found " + terminal.getName());
-            if (!terminal.getName().startsWith("ACS ACR122"))
-                return null;
+	@SuppressWarnings("restriction")
+	private static NFCDeviceType findConnectedDevice() {
+		CardTerminal terminal;
+		try {
+			TerminalFactory factory = TerminalFactory.getDefault();
+			List<CardTerminal> list = factory.terminals().list();
+			if (list.isEmpty())
+				return null;
+			terminal = list.get(0);
+			LOG.info("Found " + terminal.getName());
+			if (!terminal.getName().startsWith("ACS ACR122"))
+				return null;
 
-        } catch (CardException e) {
-            LOG.error("Not Reader found!", e);
-            return null;
-        }
-        try {
-            if (!terminal.isCardPresent())
-                throw new CardException("no SAM Module");
-            terminal.connect("*");
-        } catch (CardException e1) {
-            try {
-                terminal.connect("DIRECT");
-                return NFCDeviceType.ACR122U;
-            } catch (CardException e) {
-                LOG.debug("No compatible Reader found trough autodetection!");
-            }
-        }
-        return NFCDeviceType.TOUCH_A_TAG;
-    }
+		} catch (CardException e) {
+			LOG.error("Not Reader found!", e);
+			return null;
+		}
+		try {
+			if (!terminal.isCardPresent())
+				throw new CardException("no SAM Module");
+			terminal.connect("*");
+		} catch (CardException e1) {
+			try {
+				terminal.connect("DIRECT");
+				return NFCDeviceType.ACR122U;
+			} catch (CardException e) {
+				LOG.debug("No compatible Reader found trough autodetection!");
+			}
+		}
+		return NFCDeviceType.TOUCH_A_TAG;
+	}
 }

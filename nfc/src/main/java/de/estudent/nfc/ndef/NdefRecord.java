@@ -46,141 +46,141 @@ import de.estudent.nfc.exceptions.NdefFormatException;
  * @author Wilko Oley
  */
 public class NdefRecord {
-    private final static Logger LOG = LoggerFactory.getLogger(NdefRecord.class);
+	private final static Logger LOG = LoggerFactory.getLogger(NdefRecord.class);
 
-    private Thread parserThread;
+	private Thread parserThread;
 
-    private byte tnf;
-    private byte[] type;
-    private byte[] id;
-    private byte[] payload;
+	private byte tnf;
+	private byte[] type;
+	private byte[] id;
+	private byte[] payload;
 
-    private int length;
+	private int length;
 
-    public static final byte TNF_EMPTY = 0x00;
-    public static final byte TNF_WELL_KNOWN = 0x01;
-    public static final byte TNF_MIME_MEDIA = 0x02;
-    public static final byte TNF_ABSOLUTE_URI = 0x03;
-    public static final byte TNF_EXTERNAL_TYPE = 0x04;
-    public static final byte TNF_UNKNOWN = 0x05;
-    public static final byte TNF_UNCHANGED = 0x06;
-    public static final byte TNF_RESERVED = 0x07;
+	public static final byte TNF_EMPTY = 0x00;
+	public static final byte TNF_WELL_KNOWN = 0x01;
+	public static final byte TNF_MIME_MEDIA = 0x02;
+	public static final byte TNF_ABSOLUTE_URI = 0x03;
+	public static final byte TNF_EXTERNAL_TYPE = 0x04;
+	public static final byte TNF_UNKNOWN = 0x05;
+	public static final byte TNF_UNCHANGED = 0x06;
+	public static final byte TNF_RESERVED = 0x07;
 
-    public static final byte FLAG_MB = (byte) 0x80;
-    public static final byte FLAG_ME = (byte) 0x40;
-    public static final byte FLAG_CF = (byte) 0x20;
-    public static final byte SR = (byte) 1 << 4;
-    public static final byte IL = (byte) 1 << 3;
+	public static final byte FLAG_MB = (byte) 0x80;
+	public static final byte FLAG_ME = (byte) 0x40;
+	public static final byte FLAG_CF = (byte) 0x20;
+	public static final byte SR = (byte) 1 << 4;
+	public static final byte IL = (byte) 1 << 3;
 
-    public NdefRecord(byte[] data) throws NdefFormatException {
-	parseNdefRecord(data);
-    }
-
-    public short getTnf() {
-	return tnf;
-    }
-
-    public String getTnfAsString() {
-	switch (tnf) {
-	case TNF_EMPTY:
-	    return "TNF_EMPTY";
-	case TNF_WELL_KNOWN:
-	    return "TNF_WELL_KNOWN";
-	case TNF_MIME_MEDIA:
-	    return "TNF_MIME_MEDIA";
-	case TNF_ABSOLUTE_URI:
-	    return "TNF_ABSOLUTE_URI";
-	case TNF_EXTERNAL_TYPE:
-	    return "TNF_EXTERNAL_TYPE";
-	case TNF_UNKNOWN:
-	    return "TNF_UNKNOWN";
-	case TNF_UNCHANGED:
-	    return "TNF_UNCHANGED";
-	case TNF_RESERVED:
-	    return "TNF_RESERVED";
-	default:
-	    return null;
-	}
-    }
-
-    private void parseNdefRecord(byte[] data) {
-	ByteBuffer buffer = ByteBuffer.wrap(data);
-	byte header = buffer.get();
-	byte mFlags = (byte) (header & 0x7c);
-
-	this.tnf = (byte) (header & 0x07);
-
-	int payloadLength;
-	byte idLength = 0x00;
-
-	byte typeLength = buffer.get();
-	if ((mFlags & SR) > 0) {
-	    LOG.debug("Short Record");
-	    payloadLength = 0xFF & buffer.get();
-	} else {
-	    LOG.debug("Long Record");
-	    payloadLength = buffer.getInt();
-	}
-	if ((mFlags & IL) > 0) {
-	    idLength = buffer.get();
+	public NdefRecord(byte[] data) throws NdefFormatException {
+		parseNdefRecord(data);
 	}
 
-	type = new byte[typeLength];
-	buffer.get(type);
+	public short getTnf() {
+		return tnf;
+	}
 
-	id = new byte[idLength];
-	buffer.get(id);
+	public String getTnfAsString() {
+		switch (tnf) {
+		case TNF_EMPTY:
+			return "TNF_EMPTY";
+		case TNF_WELL_KNOWN:
+			return "TNF_WELL_KNOWN";
+		case TNF_MIME_MEDIA:
+			return "TNF_MIME_MEDIA";
+		case TNF_ABSOLUTE_URI:
+			return "TNF_ABSOLUTE_URI";
+		case TNF_EXTERNAL_TYPE:
+			return "TNF_EXTERNAL_TYPE";
+		case TNF_UNKNOWN:
+			return "TNF_UNKNOWN";
+		case TNF_UNCHANGED:
+			return "TNF_UNCHANGED";
+		case TNF_RESERVED:
+			return "TNF_RESERVED";
+		default:
+			return null;
+		}
+	}
 
-	payload = new byte[payloadLength];
-	buffer.get(payload);
+	private void parseNdefRecord(byte[] data) {
+		ByteBuffer buffer = ByteBuffer.wrap(data);
+		byte header = buffer.get();
+		byte mFlags = (byte) (header & 0x7c);
 
-	LOG.debug("NDEF Record created: ");
-	LOG.debug("TNF " + getTnfAsString());
-	LOG.debug("data " + data.length);
-	LOG.debug("payload " + payloadLength);
-	LOG.debug("typelength " + typeLength);
-	LOG.debug("idlength " + idLength);
-	LOG.debug("Total Length:" + getLength());
-    }
+		this.tnf = (byte) (header & 0x07);
 
-    public byte[] getType() {
-	return type.clone();
-    }
+		int payloadLength;
+		byte idLength = 0x00;
 
-    public byte[] getId() {
-	return id.clone();
-    }
+		byte typeLength = buffer.get();
+		if ((mFlags & SR) > 0) {
+			LOG.debug("Short Record");
+			payloadLength = 0xFF & buffer.get();
+		} else {
+			LOG.debug("Long Record");
+			payloadLength = buffer.getInt();
+		}
+		if ((mFlags & IL) > 0) {
+			idLength = buffer.get();
+		}
 
-    public byte[] getPayload() {
-	return payload.clone();
-    }
+		type = new byte[typeLength];
+		buffer.get(type);
 
-    public int getLength() {
-	return length;
-    }
+		id = new byte[idLength];
+		buffer.get(id);
 
-    protected void setTnf(byte tnf) {
-	this.tnf = tnf;
-    }
+		payload = new byte[payloadLength];
+		buffer.get(payload);
 
-    protected void setType(byte[] type) {
-	this.type = type;
-    }
+		LOG.debug("NDEF Record created: ");
+		LOG.debug("TNF " + getTnfAsString());
+		LOG.debug("data " + data.length);
+		LOG.debug("payload " + payloadLength);
+		LOG.debug("typelength " + typeLength);
+		LOG.debug("idlength " + idLength);
+		LOG.debug("Total Length:" + getLength());
+	}
 
-    protected void setId(byte[] id) {
-	this.id = id;
-    }
+	public byte[] getType() {
+		return type.clone();
+	}
 
-    protected void setPayload(byte[] payload) {
-	this.payload = payload;
-    }
+	public byte[] getId() {
+		return id.clone();
+	}
 
-    protected void setLength(int length) {
-	this.length = length;
-    }
+	public byte[] getPayload() {
+		return payload.clone();
+	}
 
-    protected Thread getParserThread() {
-	return parserThread;
-    }
+	public int getLength() {
+		return length;
+	}
+
+	protected void setTnf(byte tnf) {
+		this.tnf = tnf;
+	}
+
+	protected void setType(byte[] type) {
+		this.type = type;
+	}
+
+	protected void setId(byte[] id) {
+		this.id = id;
+	}
+
+	protected void setPayload(byte[] payload) {
+		this.payload = payload;
+	}
+
+	protected void setLength(int length) {
+		this.length = length;
+	}
+
+	protected Thread getParserThread() {
+		return parserThread;
+	}
 
 }
