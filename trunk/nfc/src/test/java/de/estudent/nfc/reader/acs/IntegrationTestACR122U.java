@@ -48,30 +48,30 @@ import de.estudent.nfc.reader.NFCDeviceFactory;
 import de.estudent.nfc.reader.NFCDeviceType;
 
 public class IntegrationTestACR122U implements BeamReceiveListener {
-    private final static Logger LOG = LoggerFactory
-            .getLogger(IntegrationTestACR122U.class);
+	private final static Logger LOG = LoggerFactory
+			.getLogger(IntegrationTestACR122U.class);
 
-    @Test
-    public void test() throws NFCInitalizationException, InterruptedException,
-            NFCException {
+	@Test
+	public void test() throws NFCInitalizationException, InterruptedException,
+			NFCException {
 
-        NFCDevice device = NFCDeviceFactory
-                .createNFCDevice(NFCDeviceType.ACR122U);
-        while (true) {
+		NFCDevice device = NFCDeviceFactory
+				.createNFCDevice(NFCDeviceType.ACR122U);
+		while (true) {
 
-            device.setBeamReceiveListener(this);
-            device.initalizeWithDefaultValues();
-            device.start();
-            device.close();
-            Thread.sleep(2000);
+			device.setBeamReceiveListener(this);
+			device.initalizeWithDefaultValues();
+			device.start();
+			device.close();
+			Thread.sleep(2000);
 
-            LOG.info("FINISHED");
-        }
+			LOG.info("FINISHED");
+		}
 
-    }
+	}
 
-    public void beamRecieved(NdefMessage message) {
-        LOG.info("Recieved \n" + new String(message.getPayload()));
-    }
+	public void beamRecieved(NdefMessage message) {
+		LOG.info("Recieved \n" + new String(message.getPayload()));
+	}
 
 }

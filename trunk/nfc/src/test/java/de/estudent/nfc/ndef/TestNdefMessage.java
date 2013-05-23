@@ -49,37 +49,37 @@ import de.estudent.nfc.exceptions.NdefFormatException;
  */
 public class TestNdefMessage {
 
-    private final static Logger LOG = LoggerFactory
-            .getLogger(TestNdefMessage.class);
+	private final static Logger LOG = LoggerFactory
+			.getLogger(TestNdefMessage.class);
 
-    @Test
-    public void parseShortNdefMessage() throws NdefFormatException {
+	@Test
+	public void parseShortNdefMessage() throws NdefFormatException {
 
-        byte[] ndefData = NFCHelper.subByteArray(
-                SNEPTestData.GALAXY_NEXUS_SNEP_SHORT, 6,
-                SNEPTestData.GALAXY_NEXUS_SNEP_SHORT.length - 6);
+		byte[] ndefData = NFCHelper.subByteArray(
+				SNEPTestData.GALAXY_NEXUS_SNEP_SHORT, 6,
+				SNEPTestData.GALAXY_NEXUS_SNEP_SHORT.length - 6);
 
-        NdefMessage ndefMessage = new NdefMessage(ndefData);
+		NdefMessage ndefMessage = new NdefMessage(ndefData);
 
-        LOG.info(new String(ndefMessage.getPayload()));
+		LOG.info(new String(ndefMessage.getPayload()));
 
-        assertArrayEquals(SNEPTestData.GALAXY_NEXS_SHORT_PAYLOAD,
-                ndefMessage.getPayload());
+		assertArrayEquals(SNEPTestData.GALAXY_NEXS_SHORT_PAYLOAD,
+				ndefMessage.getPayload());
 
-    }
+	}
 
-    @Test
-    public void parseLongNdefMessage() throws NdefFormatException {
+	@Test
+	public void parseLongNdefMessage() throws NdefFormatException {
 
-        byte[] ndefData = NFCHelper.subByteArray(
-                SNEPTestData.GALAXY_NEXUS_SNEP_LONG, 6,
-                SNEPTestData.GALAXY_NEXUS_SNEP_LONG.length - 6);
+		byte[] ndefData = NFCHelper.subByteArray(
+				SNEPTestData.GALAXY_NEXUS_SNEP_LONG, 6,
+				SNEPTestData.GALAXY_NEXUS_SNEP_LONG.length - 6);
 
-        NdefMessage ndefMessage = new NdefMessage(ndefData);
-        LOG.info(new String(ndefMessage.getPayload()));
+		NdefMessage ndefMessage = new NdefMessage(ndefData);
+		LOG.info(new String(ndefMessage.getPayload()));
 
-        assertArrayEquals(SNEPTestData.GALAXY_NEXUS_LONG_PAYLOAD,
-                ndefMessage.getPayload());
+		assertArrayEquals(SNEPTestData.GALAXY_NEXUS_LONG_PAYLOAD,
+				ndefMessage.getPayload());
 
-    }
+	}
 }

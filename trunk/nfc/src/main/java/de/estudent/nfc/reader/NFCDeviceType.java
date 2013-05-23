@@ -39,5 +39,5 @@ package de.estudent.nfc.reader;
  */
 public enum NFCDeviceType {
 
-    TOUCH_A_TAG, ACR122U, AUTODETECT;
+	TOUCH_A_TAG, ACR122U, AUTODETECT;
 }

@@ -43,26 +43,28 @@ import de.estudent.nfc.reader.NFCDeviceType;
 
 public class IntegrationTestAutodetection {
 
-    @Test
-    public void testCreateNFCDeviceTouchATag() {
-        NFCDevice device = NFCDeviceFactory
-                .createNFCDevice(NFCDeviceType.AUTODETECT);
+	@Test
+	public void testCreateNFCDeviceTouchATag() {
+		NFCDevice device = NFCDeviceFactory
+				.createNFCDevice(NFCDeviceType.AUTODETECT);
 
-        if (device instanceof ACR122UTouchATag)
-            assertTrue(true);
-        else fail("Reader not as TouchATag detected!" + device.getClass());
+		if (device instanceof ACR122UTouchATag)
+			assertTrue(true);
+		else
+			fail("Reader not as TouchATag detected!" + device.getClass());
 
-    }
+	}
 
-    @Test
-    public void testCreateNFCDeviceACR122() {
-        NFCDevice device = NFCDeviceFactory
-                .createNFCDevice(NFCDeviceType.AUTODETECT);
+	@Test
+	public void testCreateNFCDeviceACR122() {
+		NFCDevice device = NFCDeviceFactory
+				.createNFCDevice(NFCDeviceType.AUTODETECT);
 
-        if (device instanceof ACR122U)
-            assertTrue(true);
-        else fail("Reader not as ACR122U detected!" + device.getClass());
+		if (device instanceof ACR122U)
+			assertTrue(true);
+		else
+			fail("Reader not as ACR122U detected!" + device.getClass());
 
-    }
+	}
 
 }

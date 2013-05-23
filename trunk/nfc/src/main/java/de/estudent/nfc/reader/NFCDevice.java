@@ -43,15 +43,15 @@ import de.estudent.nfc.listener.BeamReceiveListener;
  */
 public interface NFCDevice {
 
-    public void start() throws NFCException;
+	public void start() throws NFCException;
 
-    public void setBeamReceiveListener(BeamReceiveListener listener);
+	public void setBeamReceiveListener(BeamReceiveListener listener);
 
-    public void initalize(long timeout, int max_allowed_size)
-            throws NFCInitalizationException;
+	public void initalize(long timeout, int max_allowed_size)
+			throws NFCInitalizationException;
 
-    public void initalizeWithDefaultValues() throws NFCInitalizationException;
+	public void initalizeWithDefaultValues() throws NFCInitalizationException;
 
-    public void close() throws NFCException;
+	public void close() throws NFCException;
 
 }

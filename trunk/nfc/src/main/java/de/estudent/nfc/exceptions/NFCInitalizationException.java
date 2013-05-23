@@ -39,14 +39,14 @@ package de.estudent.nfc.exceptions;
  */
 public class NFCInitalizationException extends Exception {
 
-    private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;
 
-    public NFCInitalizationException(String msg, Throwable prev) {
-        super(msg, prev);
-    }
+	public NFCInitalizationException(String msg, Throwable prev) {
+		super(msg, prev);
+	}
 
-    public NFCInitalizationException(String msg) {
-        super(msg);
-    }
+	public NFCInitalizationException(String msg) {
+		super(msg);
+	}
 
 }

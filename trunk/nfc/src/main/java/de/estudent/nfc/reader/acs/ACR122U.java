@@ -50,108 +50,108 @@ import de.estudent.nfc.ndef.NdefMessage;
 @SuppressWarnings("restriction")
 public class ACR122U extends AcsNFCDevice {
 
-    private final static Logger LOG = LoggerFactory.getLogger(ACR122U.class);
+	private final static Logger LOG = LoggerFactory.getLogger(ACR122U.class);
 
-    BeamReceiveListener listener;
-    CardTerminal terminal = null;
-    Card card = null;
+	BeamReceiveListener listener;
+	CardTerminal terminal = null;
+	Card card = null;
 
-    private String osName = null;
+	private String osName = null;
 
-    private int max_allowed_size;
-    private long timeout;
+	private int max_allowed_size;
+	private long timeout;
 
-    public void initalizeWithDefaultValues() throws NFCInitalizationException {
-        initalize(3500, 2048);
-    }
+	public void initalizeWithDefaultValues() throws NFCInitalizationException {
+		initalize(3500, 2048);
+	}
 
-    public void initalize(long timeout, int max_allowed_size)
-            throws NFCInitalizationException {
-        this.max_allowed_size = max_allowed_size;
-        this.timeout = timeout;
-        osName = System.getProperty("os.name");
+	public void initalize(long timeout, int max_allowed_size)
+			throws NFCInitalizationException {
+		this.max_allowed_size = max_allowed_size;
+		this.timeout = timeout;
+		osName = System.getProperty("os.name");
 
-        try {
-            TerminalFactory factory = TerminalFactory.getDefault();
-            List<CardTerminal> list = factory.terminals().list();
-            if (list.size() == 0) {
-                throw new NFCInitalizationException("Card Reader not found!");
-            } else {
-                terminal = list.get(0);
-                LOG.info("Card Reader " + terminal.getName() + " found!");
-            }
-        } catch (CardException e) {
-            throw new NFCInitalizationException(
-                    "Error initializing Card Reader", e);
-        }
-    }
+		try {
+			TerminalFactory factory = TerminalFactory.getDefault();
+			List<CardTerminal> list = factory.terminals().list();
+			if (list.size() == 0) {
+				throw new NFCInitalizationException("Card Reader not found!");
+			} else {
+				terminal = list.get(0);
+				LOG.info("Card Reader " + terminal.getName() + " found!");
+			}
+		} catch (CardException e) {
+			throw new NFCInitalizationException(
+					"Error initializing Card Reader", e);
+		}
+	}
 
-    public void start() throws NFCException {
-        try {
-            terminal.waitForCardPresent(0);
-            Thread.sleep(100);
-            card = terminal.connect("DIRECT");
-            // card.beginExclusive();
-            putReaderInInitiatorMode();
-            NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
-            listener.beamRecieved(message);
-            // card.endExclusive();
+	public void start() throws NFCException {
+		try {
+			terminal.waitForCardPresent(0);
+			Thread.sleep(100);
+			card = terminal.connect("DIRECT");
+			// card.beginExclusive();
+			putReaderInInitiatorMode();
+			NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
+			listener.beamRecieved(message);
+			// card.endExclusive();
 
-        } catch (CardException e) {
-            throw new NFCException("Error connecting to Phone!", e);
-        } catch (NdefFormatException e) {
-            throw new NFCException("wrong format received", e);
-        } catch (InterruptedException e) {
-            throw new NFCException("Interrupted while sleeping", e);
-        }
+		} catch (CardException e) {
+			throw new NFCException("Error connecting to Phone!", e);
+		} catch (NdefFormatException e) {
+			throw new NFCException("wrong format received", e);
+		} catch (InterruptedException e) {
+			throw new NFCException("Interrupted while sleeping", e);
+		}
 
-    }
+	}
 
-    public void setBeamReceiveListener(BeamReceiveListener _listener) {
-        listener = _listener;
-    }
+	public void setBeamReceiveListener(BeamReceiveListener _listener) {
+		listener = _listener;
+	}
 
-    public void close() throws NFCException {
-        try {
-            if(card != null){
-        	card.disconnect(false);        	
-            }
-            card = null;
-            terminal = null;
-        } catch (CardException e) {
-            throw new NFCException(e);
-        }
-    }
+	public void close() throws NFCException {
+		try {
+			if (card != null) {
+				card.disconnect(false);
+			}
+			card = null;
+			terminal = null;
+		} catch (CardException e) {
+			throw new NFCException(e);
+		}
+	}
 
-    @Override
-    protected byte[] sendAndReceive(byte instr, byte[] payload)
-            throws NFCException {
-        int payloadLength = (payload != null) ? payload.length : 0;
-        byte[] instruction = { (byte) 0xd4, instr };
+	@Override
+	protected byte[] sendAndReceive(byte instr, byte[] payload)
+			throws NFCException {
+		int payloadLength = (payload != null) ? payload.length : 0;
+		byte[] instruction = { (byte) 0xd4, instr };
 
-        // ACR122 header
-        byte[] header = { (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00,
-                (byte) (instruction.length + payloadLength) };
+		// ACR122 header
+		byte[] header = { (byte) 0xff, (byte) 0x00, (byte) 0x00, (byte) 0x00,
+				(byte) (instruction.length + payloadLength) };
 
-        byte[] cmd = NFCHelper.append(header, instruction);
+		byte[] cmd = NFCHelper.append(header, instruction);
 
-        cmd = NFCHelper.append(cmd, payload);
+		cmd = NFCHelper.append(cmd, payload);
 
-        NFCHelper.debugAPDUs(LOG, cmd, null);
-        int controlCode;
-        if (osName.startsWith("Windows")) {
-            controlCode = 0x310000 + 3500 * 4;
-        } else {
-            controlCode = 0x42000000 + 3500;
-        }
+		NFCHelper.debugAPDUs(LOG, cmd, null);
+		int controlCode;
+		if (osName.startsWith("Windows")) {
+			controlCode = 0x310000 + 3500 * 4;
+		} else {
+			controlCode = 0x42000000 + 3500;
+		}
 
-        byte[] response = null;
-        try {
-            response = card.transmitControlCommand(controlCode, cmd);
-        } catch (CardException e) {
-            throw new NFCException("Error transmitting!", e);
-        }
-        return response;
-    }
+		byte[] response = null;
+		try {
+			response = card.transmitControlCommand(controlCode, cmd);
+		} catch (CardException e) {
+			throw new NFCException("Error transmitting!", e);
+		}
+		return response;
+	}
 
 }
