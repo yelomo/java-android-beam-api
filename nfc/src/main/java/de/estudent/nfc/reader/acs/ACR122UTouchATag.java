@@ -67,6 +67,7 @@ public class ACR122UTouchATag extends AcsNFCDevice {
 
 	CardTerminal terminal = null;
 	CardChannel cardChannel = null;
+	Card card = null;
 
 	BeamReceiveListener listener;
 
@@ -107,7 +108,7 @@ public class ACR122UTouchATag extends AcsNFCDevice {
 				LOG.info("Card Reader " + terminal.getName() + " found!");
 			}
 			if (terminal.isCardPresent()) {
-				Card card = terminal.connect("*");
+				card = terminal.connect("*");
 				cardChannel = card.getBasicChannel();
 			} else {
 				throw new NFCInitalizationException(
@@ -195,8 +196,8 @@ public class ACR122UTouchATag extends AcsNFCDevice {
 
 	public void close() throws NFCException {
 		try {
-			if (cardChannel != null) {
-				cardChannel.getCard().disconnect(false);
+			if (card != null) {
+			card.disconnect(true);
 			}
 		} catch (CardException e) {
 			throw new NFCException("Error", e);
