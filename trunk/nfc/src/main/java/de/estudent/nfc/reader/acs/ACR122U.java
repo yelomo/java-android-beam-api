@@ -93,7 +93,7 @@ public class ACR122U extends AcsNFCDevice {
 			card = terminal.connect("DIRECT");
 			// card.beginExclusive();
 			putReaderInInitiatorMode();
-			NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
+			NdefMessage message = waitForAndroidBeam(timeout, max_allowed_size);
 			listener.beamRecieved(message);
 			// card.endExclusive();
 

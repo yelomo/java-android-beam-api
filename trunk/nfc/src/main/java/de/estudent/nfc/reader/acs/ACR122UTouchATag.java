@@ -130,7 +130,7 @@ public class ACR122UTouchATag extends AcsNFCDevice {
 		putReaderInInitiatorMode();
 
 		try {
-			NdefMessage message = whaitForAndroidBeam(timeout, max_allowed_size);
+			NdefMessage message = waitForAndroidBeam(timeout, max_allowed_size);
 			listener.beamRecieved(message);
 		} catch (NdefFormatException e) {
 			LOG.error("Error", e);

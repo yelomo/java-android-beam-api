@@ -61,7 +61,7 @@ abstract class AcsNFCDevice implements NFCDevice {
 	protected abstract byte[] sendAndReceive(byte instr, byte[] payload)
 			throws NFCException;
 
-	protected NdefMessage whaitForAndroidBeam(long timeout, int max_allowed_size)
+	protected NdefMessage waitForAndroidBeam(long timeout, int max_allowed_size)
 			throws NFCException, NdefFormatException {
 		long endTime = System.currentTimeMillis() + timeout;
 		while (true) {

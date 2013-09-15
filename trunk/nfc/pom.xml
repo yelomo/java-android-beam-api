@@ -4,29 +4,77 @@
 
 	<groupId>de.estudent</groupId>
 	<artifactId>nfc</artifactId>
-	<version>1.0.3-SNAPSHOT</version>
+	<version>1.1.0</version>
 	<packaging>jar</packaging>
 
 	<name>nfc</name>
 	<url>http://code.google.com/p/java-android-beam-api/</url>
+	<developers>
+		<developer>
+			<id>woley</id>
+			<name>Wilko Oley</name>
+			<roles>
+				<role>developer</role>
+			</roles>
+		</developer>
+	</developers>
+	<contributors>
+		<contributor>
+			<name>Markus Gulmann</name>
+			<roles>
+				<role>contributor</role>
+			</roles>
+		</contributor>
+	</contributors>
+
+	<mailingLists>
+		<mailingList>
+			<name>Google Group</name>
+			<subscribe>java-android-beam-api+subscribe@googlegroups.com</subscribe>
+			<unsubscribe>java-android-beam-api+unsubscribe@googlegroups.com</unsubscribe>
+		</mailingList>
+	</mailingLists>
+
+	<licenses>
+		<license>
+			<name>GNU General Public License (GPL)</name>
+			<url>http://www.gnu.org/licenses/gpl.txt</url>
+		</license>
+	</licenses>
+
+	<distributionManagement>
+		<downloadUrl>https://code.google.com/p/java-android-beam-api/downloads/list</downloadUrl>
+	</distributionManagement>
+
+	<scm>
+		<connection>scm:svn:http://java-android-beam-api.googlecode.com/svn/trunk/</connection>
+		<developerConnection>scm:svn:https://java-android-beam-api.googlecode.com/svn/trunk/</developerConnection>
+		<tag>HEAD</tag>
+		<url>https://code.google.com/p/java-android-beam-api/source/browse/</url>
+	</scm>
+
+	<issueManagement>
+		<system>Google Code</system>
+		<url>https://code.google.com/p/java-android-beam-api/issues/list/</url>
+	</issueManagement>
 
 	<properties>
 		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-				<targetJdk>1.7</targetJdk>
+		<targetJdk>1.7</targetJdk>
 	</properties>
-	 <pluginRepositories>
-	<pluginRepository>
-	    <id>mc-release</id>
-	    <name>Local Maven repository of releases</name>
-	    <url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
-	    <snapshots>
-	        <enabled>false</enabled>
-	    </snapshots>
-	    <releases>
-	        <enabled>true</enabled>
-	    </releases>
-	</pluginRepository>
-	 </pluginRepositories>
+	<pluginRepositories>
+		<pluginRepository>
+			<id>mc-release</id>
+			<name>Local Maven repository of releases</name>
+			<url>http://mc-repo.googlecode.com/svn/maven2/releases</url>
+			<snapshots>
+				<enabled>false</enabled>
+			</snapshots>
+			<releases>
+				<enabled>true</enabled>
+			</releases>
+		</pluginRepository>
+	</pluginRepositories>
 	<dependencies>
 		<dependency>
 			<groupId>junit</groupId>
@@ -63,22 +111,56 @@
 		</dependency>
 	</dependencies>
 	<build>
-    <plugins>
-        <plugin>
-            <groupId>com.google.code.maven-license-plugin</groupId>
-            <artifactId>maven-license-plugin</artifactId>
-             <version>1.4.0</version>
-            <configuration>
-                <header>src/etc/header.txt</header>
-            </configuration>
-        </plugin>
-       <plugin>
-        <artifactId>maven-assembly-plugin</artifactId>
-        <version>2.3</version>
-        <configuration>
-          <descriptor>src/main/assembly/bin.xml</descriptor>
-        </configuration>
-      </plugin>
-    </plugins>
-  </build>
+		<plugins>
+			<plugin>
+				<groupId>com.google.code.maven-license-plugin</groupId>
+				<artifactId>maven-license-plugin</artifactId>
+				<version>1.4.0</version>
+				<configuration>
+					<header>src/etc/header.txt</header>
+				</configuration>
+			</plugin>
+			<plugin>
+				<artifactId>maven-assembly-plugin</artifactId>
+				<version>2.3</version>
+				<configuration>
+					<descriptor>src/main/assembly/bin.xml</descriptor>
+				</configuration>
+			</plugin>
+		</plugins>
+	</build>
+	<reporting>
+		<plugins>
+			<plugin>
+				<groupId>org.apache.maven.plugins</groupId>
+				<artifactId>maven-site-plugin</artifactId>
+				<version>3.2</version>
+				<configuration>
+					<locales>en</locales>
+					<outputEncoding>UTF-8</outputEncoding>
+					<reportPlugins>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-project-info-reports-plugin</artifactId>
+							<version>2.7</version>
+							<configuration>
+								<dependencyDetailsEnabled>false</dependencyDetailsEnabled>
+								<dependencyLocationsEnabled>false</dependencyLocationsEnabled>
+							</configuration>
+							<reports>
+								<!-- report>index</report -->
+								<report>dependencies</report>
+								<report>project-team</report>
+							</reports>
+						</plugin>
+						<plugin>
+							<groupId>org.apache.maven.plugins</groupId>
+							<artifactId>maven-javadoc-plugin</artifactId>
+							<version>2.8</version>
+						</plugin>
+					</reportPlugins>
+				</configuration>
+			</plugin>
+		</plugins>
+	</reporting>
 </project>

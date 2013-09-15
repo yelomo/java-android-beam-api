@@ -38,7 +38,6 @@ import java.nio.ByteBuffer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import de.estudent.nfc.NFCHelper;
 import de.estudent.nfc.exceptions.NdefFormatException;
 
 /**
@@ -47,8 +46,6 @@ import de.estudent.nfc.exceptions.NdefFormatException;
  */
 public class NdefRecord {
 	private final static Logger LOG = LoggerFactory.getLogger(NdefRecord.class);
-
-	private Thread parserThread;
 
 	private byte tnf;
 	private byte[] type;
@@ -177,10 +174,6 @@ public class NdefRecord {
 
 	protected void setLength(int length) {
 		this.length = length;
-	}
-
-	protected Thread getParserThread() {
-		return parserThread;
 	}
 
 }
